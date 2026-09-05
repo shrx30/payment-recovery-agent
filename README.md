@@ -1,4 +1,76 @@
-powershell -Command "$content = @'
+\## 📖 Instruction Manual
+
+
+
+\### 1. Install
+
+
+
+python -m venv .venv
+
+.venv\\Scripts\\activate
+
+pip install -r requirements.txt
+
+
+
+\### 2. Configure API Key
+
+
+
+Create a `.env` file with the required NVIDIA API credentials.
+
+
+
+Do not commit `.env`.
+
+
+
+\### 3. Load Evaluation Data
+
+
+
+python -m app.load\_eval\_data
+
+
+
+\### 4. Run Demo
+
+
+
+python demo.py
+
+
+
+\### 5. Run Tests
+
+
+
+python -m app.test\_signals
+
+
+
+\### 6. Run Evaluation
+
+
+
+python -m app.evaluate\_recovery
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \# AI Revenue Recovery Agent
 
@@ -58,71 +130,34 @@ The LLM does not directly control payment operations. It selects from actions al
 
 
 
-\## 🏗️ Architecture
-
-
-
-```text
-
-FAILED PAYMENT
-
-&#x20;     |
-
-&#x20;     v
-
-SIGNAL EXTRACTION
-
-&#x20;     |
-
-&#x20;     v
-
-EVIDENCE / POLICY CLASSIFICATION
-
-&#x20;     |
-
-&#x20;     +----------------------+
-
-&#x20;     |                      |
-
-&#x20;     v                      v
-
-KNOWN FAILURE          AMBIGUOUS CASE
-
-&#x20;     |                      |
-
-&#x20;     v                      v
-
-DETERMINISTIC POLICY       LLM
-
-&#x20;     |                  REASONING
-
-&#x20;     +----------+-----------+
-
-&#x20;                |
-
-&#x20;                v
-
-&#x20;       SAFETY CONSTRAINTS
-
-&#x20;                |
-
-&#x20;                v
-
-&#x20;        EXECUTE RECOVERY
-
-&#x20;                |
-
-&#x20;                v
-
-&#x20;         VERIFY OUTCOME
-
-&#x20;                |
-
-&#x20;         +------+------+
-
-&#x20;         |             |
-
-&#x20;         v             v
-
-&#x20;     RECOVERED      ESCALATED
-
+                         FAILED PAYMENT
+                               |
+                               v
+                      SIGNAL EXTRACTION
+                               |
+                               v
+                  EVIDENCE / POLICY CLASSIFICATION
+                               |
+                    +----------+----------+
+                    |                     |
+                    v                     v
+             KNOWN FAILURE          AMBIGUOUS CASE
+                    |                     |
+                    v                     v
+          DETERMINISTIC POLICY           LLM
+                    |                 REASONING
+                    +---------+-----------+
+                              |
+                              v
+                     SAFETY CONSTRAINTS
+                              |
+                              v
+                      EXECUTE RECOVERY
+                              |
+                              v
+                       VERIFY OUTCOME
+                              |
+                    +---------+---------+
+                    |                   |
+                    v                   v
+                 RECOVERED          ESCALATED
