@@ -161,3 +161,33 @@ The LLM does not directly control payment operations. It selects from actions al
                     |                   |
                     v                   v
                  RECOVERED          ESCALATED
+
+
+
+
+                 ## 🔧 Key Engineering Challenges & Fixes
+
+### 1. Ambiguous Gateway Responses
+**Problem:** Some gateway responses did not clearly indicate whether authorization had occurred.
+
+**Fix:** Added signal extraction and evidence classification. Known failures use deterministic policies, while ambiguous cases are sent to the LLM for contextual reasoning.
+
+### 2. Unsafe Retry Behavior
+**Problem:** Blindly retrying a timeout could create duplicate-charge risk if authorization had already occurred.
+
+**Fix:** Added bounded `verify_then_retry` behavior and restricted actions according to the available evidence.
+
+### 3. Retry Limits & Escalation
+**Problem:** Recovery should not continue indefinitely when repeated attempts fail.
+
+**Fix:** Added explicit maximum retry checks. Once the limit is reached, the system stops automated recovery and escalates the payment.
+
+### 4. LLM Response Handling
+**Problem:** Early LLM responses could be truncated or incompatible with the original model configuration.
+
+**Fix:** Migrated the decision layer to NVIDIA NIM with `meta/muse-glimmer-30b`, increased the response token limit, and added robust response parsing.
+
+### 5. Evaluation Reproducibility
+**Problem:** Repeated hosted LLM evaluations produced different decisions even with temperature set to 0.
+
+**Fix:** Reported results across multiple runs as a range rather than presenting a single run as universally reproducible. The exact source of the hosted-inference variability was not isolated.
